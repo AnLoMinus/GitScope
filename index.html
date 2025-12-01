@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <title>GitScope · SparKing Profile Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="GitScope – SparKing GitHub Profile Dashboard by AnLoMinus. Scan any GitHub username and see cosmic metrics, languages, and top repositories." />
+
+  <!-- SparKing Cosmic Style -->
+  <style>
+    :root {
+      --bg-main: #050816;
+      --bg-card: rgba(10, 16, 40, 0.92);
+      --bg-chip: rgba(255, 255, 255, 0.06);
+      --accent-1: #ffdd55;
+      --accent-2: #4df5ff;
+      --accent-3: #ff6ad5;
+      --accent-4: #7cff6b;
+      --text-main: #f5f7ff;
+      --text-muted: #a3b0d5;
+      --danger: #ff4d6a;
+      --border-glow: 0 0 18px rgba(116, 211, 255, 0.7);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-soft: 0 22px 60px rgba(0, 0, 0, 0.55);
+      --transition-fast: 0.18s ease-out;
+      --transition-med: 0.26s ease-out;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(120, 60, 255, 0.22), transparent 55%),
+        radial-gradient(circle at 80% 80%, rgba(0, 210, 255, 0.25), transparent 55%),
+        radial-gradient(circle at 40% 90%, rgba(255, 220, 120, 0.15), transparent 55%),
+        var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .page-shell {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    header.site-header {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .brand-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #ffffff, #ffd86b, #ff6ad5 55%, #4df5ff 100%);
+      box-shadow: 0 0 22px rgba(255, 255, 255, 0.65);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-logo::after {
+      content: "";
+      position: absolute;
+      inset: 18%;
+      border-radius: 50%;
+      border: 2px solid rgba(5, 8, 30, 0.85);
+      box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .brand-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-title span:first-child {
+      font-size: 0.78rem;
+      color: var(--accent-2);
+      text-transform: none;
+    }
+
+    .brand-title span:last-child {
+      background: linear-gradient(120deg, #ffdd55, #ff6ad5, #4df5ff);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .brand-tagline {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-width: 360px;
+    }
+
+    .brand-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .brand-meta-strong {
+      color: var(--accent-1);
+      font-weight: 600;
+    }
+
+    .pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: linear-gradient(120deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.01));
+      backdrop-filter: blur(12px);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .card {
+      border-radius: var(--radius-xl);
+      background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.12), transparent 55%), var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: var(--shadow-soft);
+      padding: 18px 18px 18px;
+      backdrop-filter: blur(18px);
+    }
+
+    .card-header-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      gap: 8px;
+    }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-title span.icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 30% 20%, #ffdd55, #ff6ad5);
+      box-shadow: 0 0 12px rgba(255, 106, 213, 0.7);
+      font-size: 0.9rem;
+    }
+
+    .card-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .search-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .field-shell {
+      position: relative;
+      flex: 1 1 220px;
+      min-width: 0;
+    }
+
+    .field-shell input {
+      width: 100%;
+      padding: 10px 12px 10px 34px;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.12), transparent 55%), rgba(5, 8, 30, 0.9);
+      color: var(--text-main);
+      font-size: 0.92rem;
+      outline: none;
+      box-shadow: 0 0 0 0 transparent;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast), background var(--transition-fast);
+    }
+
+    .field-shell input::placeholder {
+      color: rgba(170, 183, 220, 0.85);
+    }
+
+    .field-shell input:focus {
+      border-color: rgba(77, 245, 255, 0.9);
+      box-shadow: var(--border-glow);
+      transform: translateY(-1px);
+      background: radial-gradient(circle at 0 0, rgba(77, 245, 255, 0.2), transparent 60%), rgba(5, 8, 30, 0.98);
+    }
+
+    .field-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.95rem;
+      opacity: 0.8;
+    }
+
+    .btn-main {
+      border-radius: var(--radius-lg);
+      border: none;
+      padding: 9px 18px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      background: linear-gradient(120deg, #ffdd55, #ff6ad5, #4df5ff);
+      color: #050816;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .btn-main span.icon {
+      font-size: 1rem;
+    }
+
+    .btn-main:hover {
+      transform: translateY(-1px) scale(1.01);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
+      filter: brightness(1.05);
+    }
+
+    .btn-main:active {
+      transform: translateY(1px) scale(0.99);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.7);
+    }
+
+    .hint-line {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .hint-highlight {
+      color: var(--accent-2);
+      font-weight: 500;
+    }
+
+    .alert-box {
+      margin-top: 10px;
+      font-size: 0.86rem;
+      padding: 8px 10px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.04);
+      display: none;
+    }
+
+    .alert-box.error {
+      border-color: rgba(255, 77, 106, 0.8);
+      color: var(--danger);
+      background: rgba(255, 77, 106, 0.08);
+    }
+
+    .alert-box.info {
+      border-color: rgba(77, 245, 255, 0.7);
+      color: var(--accent-2);
+      background: rgba(77, 245, 255, 0.08);
+    }
+
+    .grid-main {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1.5fr);
+      gap: 16px;
+      margin-top: 4px;
+    }
+
+    @media (max-width: 880px) {
+      .grid-main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .brand-row {
+        align-items: flex-start;
+      }
+      .brand-meta {
+        align-items: flex-start;
+      }
+    }
+
+    .profile-card-layout {
+      display: flex;
+      gap: 14px;
+    }
+
+    @media (max-width: 620px) {
+      .profile-card-layout {
+        flex-direction: column;
+      }
+    }
+
+    .avatar-shell {
+      flex: 0 0 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .avatar-shell img {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.55);
+      box-shadow: 0 0 22px rgba(77, 245, 255, 0.7);
+      object-fit: cover;
+    }
+
+    .avatar-shell .user-login {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .avatar-shell .user-link {
+      font-size: 0.8rem;
+      color: var(--accent-2);
+      text-decoration: none;
+    }
+
+    .avatar-shell .user-link:hover {
+      text-decoration: underline;
+    }
+
+    .profile-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .profile-name-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .profile-name-row span.real-name {
+      font-size: 1.05rem;
+    }
+
+    .profile-name-row span.badge {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: var(--bg-chip);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .profile-bio {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .profile-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .chip {
+      font-size: 0.78rem;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: var(--bg-chip);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chip span.icon {
+      font-size: 0.78rem;
+    }
+
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 620px) {
+      .metrics-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .metric-card {
+      border-radius: var(--radius-md);
+      padding: 8px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.14), transparent 60%), rgba(3, 6, 25, 0.9);
+      font-size: 0.78rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .metric-label {
+      color: var(--text-muted);
+    }
+
+    .metric-value {
+      font-size: 1.02rem;
+      font-weight: 600;
+    }
+
+    .metric-pill {
+      font-size: 0.7rem;
+      color: var(--accent-2);
+    }
+
+    .section-title-inline {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .lang-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .lang-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+    }
+
+    .lang-label {
+      min-width: 80px;
+      color: var(--text-muted);
+    }
+
+    .lang-bar-shell {
+      flex: 1;
+      height: 7px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.06);
+      position: relative;
+    }
+
+    .lang-bar-fill {
+      position: absolute;
+      inset: 0;
+      width: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #ffdd55, #ff6ad5, #4df5ff, #7cff6b);
+      box-shadow: 0 0 16px rgba(77, 245, 255, 0.8);
+      transition: width 0.5s ease-out;
+    }
+
+    .lang-count {
+      min-width: 38px;
+      text-align: right;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .repos-list {
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 360px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .repo-card {
+      border-radius: var(--radius-md);
+      padding: 9px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.1), transparent 60%), rgba(3, 6, 25, 0.94);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-size: 0.8rem;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .repo-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.8);
+      border-color: rgba(77, 245, 255, 0.6);
+    }
+
+    .repo-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .repo-title-row a {
+      font-weight: 600;
+      font-size: 0.82rem;
+      color: var(--accent-2);
+      text-decoration: none;
+    }
+
+    .repo-title-row a:hover {
+      text-decoration: underline;
+    }
+
+    .repo-badge {
+      font-size: 0.68rem;
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: var(--bg-chip);
+      white-space: nowrap;
+    }
+
+    .repo-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .repo-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 3px;
+    }
+
+    .repo-meta-item {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .repo-meta-item span.icon {
+      font-size: 0.72rem;
+    }
+
+    .small-tag {
+      font-size: 0.7rem;
+      color: var(--accent-1);
+    }
+
+    .muted {
+      color: var(--text-muted);
+    }
+
+    .empty-state {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      padding: 12px 10px 4px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    footer.site-footer {
+      margin-top: 26px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    footer.site-footer a {
+      color: var(--accent-2);
+      text-decoration: none;
+    }
+
+    footer.site-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .rap-lines {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--accent-2);
+      white-space: pre-line;
+    }
+
+    .holy-line {
+      margin-top: 6px;
+      font-size: 0.8rem;
+      color: var(--accent-1);
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="brand-row">
+        <div class="brand-main">
+          <div class="brand-logo"></div>
+          <div>
+            <div class="brand-title">
+              <span>AnLoMinus · SparKing Leon Yaakobov</span>
+              <span>GitScope · GitHub Profile Dashboard</span>
+            </div>
+            <p class="brand-tagline">
+              🔍 Scan any GitHub username · ⚡ Get cosmic metrics, languages & top repos in one SparKing dashboard.
+            </p>
+          </div>
+        </div>
+
+        <div class="brand-meta">
+          <div class="pill">
+            <span>🛰️</span>
+            <span class="brand-meta-strong">Mode:</span>
+            <span>Profile Insight · GS</span>
+          </div>
+          <div>Built for creators, devs & recruiters 👨‍💻👩‍🎨</div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Search Card -->
+      <section class="card" id="search-card">
+        <div class="card-header-line">
+          <div>
+            <div class="card-title">
+              <span class="icon">🧬</span>
+              <span>GitScope Scan · הזן שם משתמש</span>
+            </div>
+            <p class="card-subtitle">
+              הקלד שם משתמש של GitHub, לדוגמה:
+              <span class="hint-highlight">anlominus</span>, ואז לחץ על סריקה.
+            </p>
+          </div>
+        </div>
+
+        <div class="search-row">
+          <div class="field-shell">
+            <span class="field-icon">👤</span>
+            <input
+              id="username-input"
+              type="text"
+              autocomplete="off"
+              placeholder="Enter GitHub username, e.g. torvalds, gaearon, AnLoMinus..."
+            />
+          </div>
+          <button class="btn-main" id="scan-btn">
+            <span class="icon">⚡</span>
+            <span>Scan Profile</span>
+          </button>
+        </div>
+
+        <p class="hint-line">
+          💡 טיפ: אפשר ללחוץ <span class="hint-highlight">Enter</span> אחרי הקלדת שם המשתמש.
+        </p>
+
+        <div id="alert-box" class="alert-box"></div>
+      </section>
+
+      <!-- Main Grid -->
+      <section class="grid-main">
+        <!-- Left: Profile & Metrics -->
+        <section class="card hidden" id="profile-section">
+          <div class="card-header-line">
+            <div>
+              <div class="card-title">
+                <span class="icon">👨‍🚀</span>
+                <span>Profile · פרטי משתמש</span>
+              </div>
+              <p class="card-subtitle" id="profile-subtitle">
+                GitHub identity, activity & community stats.
+              </p>
+            </div>
+          </div>
+
+          <div class="profile-card-layout">
+            <div class="avatar-shell">
+              <img id="avatar-img" src="" alt="Avatar" />
+              <div class="user-login" id="user-login">@username</div>
+              <a id="user-link" href="#" target="_blank" rel="noopener noreferrer" class="user-link">Open on GitHub ↗</a>
+            </div>
+
+            <div class="profile-main">
+              <div class="profile-name-row">
+                <span class="real-name" id="real-name">Full Name</span>
+                <span class="badge">
+                  🌌 <span id="account-age-label">Member since · –</span>
+                </span>
+              </div>
+
+              <p class="profile-bio" id="profile-bio"></p>
+
+              <div class="profile-meta-row">
+                <div class="chip">
+                  <span class="icon">📍</span>
+                  <span id="location-label">Location: –</span>
+                </div>
+                <div class="chip">
+                  <span class="icon">📦</span>
+                  <span id="repos-label">Public Repos: –</span>
+                </div>
+                <div class="chip">
+                  <span class="icon">👥</span>
+                  <span id="followers-label">Followers / Following: –</span>
+                </div>
+              </div>
+
+              <div class="metrics-row">
+                <div class="metric-card">
+                  <div class="metric-label">Public Repositories</div>
+                  <div class="metric-value" id="metric-public-repos">0</div>
+                  <div class="metric-pill">Code Surface · GS</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-label">Social Gravity</div>
+                  <div class="metric-value" id="metric-social-score">0</div>
+                  <div class="metric-pill">Followers-weighted</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-label">Activity Density</div>
+                  <div class="metric-value" id="metric-activity-score">0</div>
+                  <div class="metric-pill">Repos / Year</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right: Languages & Repos -->
+        <section class="card hidden" id="repos-section">
+          <div class="card-header-line">
+            <div>
+              <div class="card-title">
+                <span class="icon">📊</span>
+                <span>Tech Stack & Top Repositories</span>
+              </div>
+              <p class="card-subtitle">
+                שפות קוד מובילות + מאגרים בולטים לפי כוכבים ופעילות.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <!-- Languages -->
+            <div>
+              <div class="section-title-inline">
+                <span>🧠 Language Mix</span>
+                <span class="muted" id="lang-summary-label">–</span>
+              </div>
+              <div id="lang-list" class="lang-list"></div>
+            </div>
+
+            <!-- Repos -->
+            <div style="margin-top: 12px;">
+              <div class="section-title-inline">
+                <span>⭐ Top Public Repositories</span>
+                <span class="muted" id="repos-summary-label">(–)</span>
+              </div>
+              <div id="repos-list" class="repos-list">
+                <p class="empty-state">
+                  ⏳ Waiting for a username…<br />
+                  אחרי שתסרוק משתמש, כאן תראה את המאגרים החזקים שלו.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- Footer -->
+      <footer class="site-footer">
+        <div>
+          🔗 Credits: Built for
+          <a href="https://github.com/AnLoMinus" target="_blank" rel="noopener noreferrer">AnLoMinus · SparKing</a>
+          using the
+          <a href="https://docs.github.com/en/rest" target="_blank" rel="noopener noreferrer">GitHub REST API</a>.
+        </div>
+        <div>📅 תאריך: 01.12.2025 · י״ט בכסלו התשפ״ו · 🕒 שעה (Asia/Jerusalem): 14:20</div>
+        <div class="rap-lines">
+🎤 Hook – GitScope Flow:  
+GitScope על המסך, מאיר כל repo נסתר 🌌  
+מנתח שפות, כוכבים – מי באמת כאן צ׳ארט מיתר ⭐  
+אם הקוד שלך בוער – הדאשבורד עושה לו כתר 👑  
+SparKing על הגרף, שם אותך בראש היתר 🚀
+        </div>
+        <div class="holy-line">
+          ✨ "וכל מעשיך יהיו לשם שמים" (אבות ב׳, י״ב) · מספר המידות: 13 מידות ✨
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
